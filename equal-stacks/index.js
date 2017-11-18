@@ -20,29 +20,14 @@ function readLine() {
 
 /////////////// ignore above this line ////////////////////
 
-function validateSum(drum_items_list, drum_sums) {
-	var max = 0;
-	var idx = 0;
-	var sumsEqual = true;
+function sum(list) {
+	var sum = 0;
 	
-	for(var i = 0; i < drum_items_list.length; i++) {
-		if (drum_sums[i] > max) {
-			max = drum_sums[i];
-			idx = i;
-		}
-		
-		if (i > 0) {
-			if (drum_sums[i] != drum_sums[i - 1]) {
-				sumsEqual = false;
-			}
-		}			
+	for(var i = 0; i < list.length; i++) {
+		sum += list[i];			
 	}
 	
-	return {
-		"max": max,
-		"idx": idx,
-		"sumsEqual": sumsEqual
-	}
+	return sum;
 }
 
 function main() {
@@ -57,38 +42,24 @@ function main() {
     h3 = readLine().split(' ');
     h3 = h3.map(Number);
 
-	var drum_sums = [ 0, 0, 0 ];
-	var drum_items_list = [ n1, n2, n3 ];
-	var items = [ h1, h2, h3 ];
-	for(var i = 0; i < drum_items_list.length; i++) {
-		drum_items = drum_items_list[i];
-		
-		// add the sum from reverse of the drum (stack)
-		for(var j = items[i].length - 1; j >= 0 ; j--) {
-			drum_sums[i] += items[i][j];
-		}
-	}
+	var sum_h1 = sum(h1);
+	var sum_h2 = sum(h2);
+	var sum_h3 = sum(h3);
 	
-	var evalResult = validateSum(drum_items_list, drum_sums);
-	//process.stdout.write("evalResult =" + JSON.stringify(evalResult) + "\n");	
-
-	var count = 1;
-	
-	while(evalResult.sumsEqual == false) {
-		// subtract from top of the stack currently with largest sum
-		var toBeSubtracted = (items[evalResult.idx]).shift();
-		drum_sums[evalResult.idx] -= toBeSubtracted;
-		//process.stdout.write("drum_sums in loop =" + JSON.stringify(drum_sums) + "\n");		
-		//process.stdout.write("items in loop =" + JSON.stringify(items) + "\n");			
-
-		evalResult = validateSum(drum_items_list, drum_sums);
-		//process.stdout.write("evalResult in loop =" + JSON.stringify(evalResult) + "\n");
-
-		if (++count > 10) {
-			return;
+	while (! (sum_h1 == sum_h2 && sum_h2 == sum_h3) ) {
+    	if (sum_h1 > sum_h2 || sum_h1 > sum_h3) {
+        	t = h1.shift();
+			sum_h1 -= t;
+		} 
+		if (sum_h2 > sum_h1 || sum_h2 > sum_h3) {
+        	t = h2.shift();
+			sum_h2 -= t;
 		}
-
+    	if (sum_h3 > sum_h1 || sum_h3 > sum_h2) {
+        	t = h3.shift();
+			sum_h3 -= t;
+		}
 	}
     
-	process.stdout.write("" + drum_sums[0] + "\n");	
+	process.stdout.write("" + sum_h1 + "\n");	
 }
